@@ -1,17 +1,28 @@
-<h1>{{ title }}</h1>
+<h1 class="title">{{ title }}</h1>
 
-<ul>
-  <p *ngIf="todos.length == 0"><small>Alright, no tasks today.</small></p>
-  <li *ngFor="let todo of todos">{{ todo.task }} - 
-    <button (click)="remove(todo)">Delete</button> | 
-    <button (click)="markAsDone(todo)">Done</button></li>
+<ul *ngIf="mode == 'list'">
+  <p class="text-center" *ngIf="todos.length == 0"><small>Alright, no tasks today.</small></p>
+  <li *ngFor="let todo of todos">
+    {{ todo.title }}
+    <button (click)="remove(todo)" class="far fa-trash-alt"></button>
+    <button *ngIf="!todo.done" (click)="markAsDone(todo)"><i class="far fa-check-circle"></i></button>
+    <button *ngIf="todo.done" (click)="markAsUndone(todo)"><i class="fas fa-check-circle"></i></button>
 </ul>
 
-<form [formGroup]="todoForm">
-  <fieldset>
-    <label>Task</label>
-    <input type="text" placeholder="Insert the task name here" maxlength="60" minlength="3" formControlName="title">
-    <small *ngIf="todoForm.controls.title.invalid && !todoForm.controls.title.pristine">This field must have between 3 and 60 characters</small>
-    <button [disabled]="todoForm.invalid" (click)="addTask()">Save</button>
-  </fieldset>
-</form>
+<div id="modal" *ngIf="mode=='add'">
+  <h1 class="text-center">New task</h1>
+  <form [formGroup]="todoForm">
+      <input class="text-center" type="text" placeholder="Insert the task name here" maxlength="60" minlength="3" formControlName="title">
+      <small class="danger text-center" *ngIf="todoForm.controls.title.invalid && !todoForm.controls.title.pristine">This field must have between 3 and 60 characters<br></small>
+      <p class="text-center"><button class="button" [disabled]="todoForm.invalid" (click)="addTask()"><i class="far fa-save"></i> Save</button></p>
+  </form>
+</div>
+
+<button class="add-button button" (click)="changeMode('add')" *ngIf="mode=='list'">
+  <i class="fas fa-plus-circle"></i>
+  New task
+</button>
+<button class="button" (click)="changeMode('list')" *ngIf="mode=='add'">
+  <i class="fas fa-times"></i>
+  CANCEL
+</button>
